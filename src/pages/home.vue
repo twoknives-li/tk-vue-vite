@@ -24,6 +24,7 @@
         <el-button type="primary" @click="doSearch">搜索</el-button>
         <el-button type="reset" @click="doReset">重置</el-button>
       </el-form>
+      <el-button type="primary" @click="newsList">新闻中心</el-button>
     </div>
   </div>
 </template>
@@ -52,6 +53,10 @@ export default {
     this.getList();
   },
   methods: {
+    /* 新闻中心 */
+    newsList(){
+      this.$router.push({path:'/news-list'});
+    },
     doSearch() {
       console.log(this.formInfo);
       console.log("do search");

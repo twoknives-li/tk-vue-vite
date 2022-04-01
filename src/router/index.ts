@@ -12,6 +12,11 @@ const routes = [
     name: 'About',
     component: () => import(/* webpackChunkName: "about" */ '../pages/about/about.vue'),
   },
+  {
+    path: '/news-list',
+    name: 'News',
+    component: () => import(/* webpackChunkName: "about" */ '../pages/news/news-list.vue'),
+  },
 ];
 
 const router = createRouter({
