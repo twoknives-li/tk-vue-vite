@@ -8,6 +8,9 @@ import App from './App.vue'
 
 const app = createApp(App)
 
+app.config.globalProperties.$api = api;
+app.config.globalProperties.$sysName = '测试系统名称';
+
 app.use(ElementPlus, {
   locale: zhCn,
 })

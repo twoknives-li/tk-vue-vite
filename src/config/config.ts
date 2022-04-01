@@ -6,7 +6,7 @@ import {
 const config = {
     // baseURL: process.env.baseURL
     baseURL: 'xxx/api',
-    timeout: 1000,
+    timeout: 2000,
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
     },
@@ -17,8 +17,7 @@ const api: any = axios.create(config);
 // 默认 post 请求，使用 application/json 形式
 api.defaults.headers.post['Content-Type'] = 'application/json';
 
-api.post = function (url, params) {
-
+api.post = function (url:any, params:any) {
     return new Promise((resolve, reject) => {
         // console.log("****************************");
         axios({
@@ -43,10 +42,10 @@ api.post = function (url, params) {
 
 
 // 添加请求拦截器
-api.interceptors.request.use(function (config) {
+api.interceptors.request.use(function (config:any) {
     // 在发送请求之前做些什么
     return config;
-}, function (error) {
+}, function (error:any) {
     // 对请求错误做些什么
     return Promise.reject(error);
 });

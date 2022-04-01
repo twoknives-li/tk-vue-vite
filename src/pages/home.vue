@@ -40,22 +40,42 @@ export default {
       },
     };
   },
+  setup() {
+    const {proxy} = getCurrentInstance();
+    console.log('proxy', proxy);
+    console.log(proxy.$api);
+    console.log(proxy.$sysName);
+    return { proxy };
+  },
   created() {
     console.log("is created");
+    this.getList();
   },
   methods: {
     doSearch() {
       console.log(this.formInfo);
-      console.log('do search');
+      console.log("do search");
     },
     doReset() {
-      console.log('重置');
-      this.formInfo= {
+      console.log("重置");
+      this.formInfo = {
         name: "",
         phone: "",
         beginTime: "",
       };
-    }
+    },
+    getList() {
+      this.proxy.$api
+        .post("/index/getAllMap", {
+          params: {},
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
 };
 </script>
