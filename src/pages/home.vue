@@ -1,36 +1,84 @@
 <template>
+  <div class="
+          max-w-md
+          mx-auto
+          bg-white
+          rounded-xl
+          shadow-md
+          overflow-hidden
+          md:max-w-2xl
+        ">
+    <div class="md:flex">
+      <div class="p-8">
+        <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
+          Case study
+        </div>
+        <a href="#" class="
+                block
+                mt-1
+                text-lg
+                leading-tight
+                font-medium
+                text-black
+                hover:underline
+              ">Finding customers for your new business</a>
+        <p class="mt-2 text-gray-500">
+          Getting a new business off the ground is a lot of hard work. Here are
+          five ideas you can use to find your first customers.
+        </p>
+      </div>
+    </div>
+  </div>
   <div>
     <div ref="mapInfo"></div>
-    <div class="searchBox">
-      <el-form :model="formInfo" ref="searchForm" label-width="80px">
-        <el-form-item label="姓名">
-          <el-input v-model="formInfo.name" placeholder="姓名"></el-input>
-        </el-form-item>
-        <el-form-item label="电话">
-          <el-input v-model="formInfo.phone" placeholder="电话"></el-input>
-        </el-form-item>
-
-        <el-form-item label="登录时间"
-          ><el-date-picker
-            v-model="formInfo.beginTime"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="截止时间"
-          >
-          </el-date-picker>
-        </el-form-item>
-
-        <el-button type="primary" @click="doSearch">搜索</el-button>
-        <el-button type="reset" @click="doReset">重置</el-button>
-      </el-form>
+    <div class="flex flex-row p-2">
       <el-button type="primary" @click="newsList">新闻中心</el-button>
+      <el-button type="primary" @click="formList">表单列表</el-button>
+      <el-button type="primary" @click="newsList">新闻中心</el-button>
+      <el-link type="primary" class="mr-5" v-for="(item,key) in menuList" :key="key" :href="item.path">{{ item.name }}</el-link>
+    </div>
+    <div class="searchBox">
+      <el-row :gutter="20">
+        <el-form :model="formInfo" label-width="auto" ref="searchForm">
+          <el-col :lg="20" :xl="20">
+            <el-form-item label="姓名">
+              <el-input v-model="formInfo.name" placeholder="姓名"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :lg="20" :xl="20">
+            <el-form-item label="电话">
+              <el-input v-model="formInfo.phone" placeholder="电话"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :lg="20" :xl="20">
+            <el-form-item label="登录时间"><el-date-picker v-model="formInfo.beginTime" type="daterange" range-separator="至"
+                start-placeholder="开始时间" end-placeholder="截止时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :lg="20" :xl="20">
+            <el-button type="primary" @click="doSearch">搜索</el-button>
+            <el-button type="reset" @click="doReset">重置</el-button>
+          </el-col>
+        </el-form>
+      </el-row>
+    </div>
+    <div class="flex flex-row order-1">
+      <div>AA</div>
+      <div>AA</div>
+      <div>AA</div>
+      <div>AAb</div>
+    </div>
+    <div class="container mx-auto">
+      <div class="p-5">p-5</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { getCurrentInstance } from "vue";
+import { ComponentInternalInstance, getCurrentInstance, ref, unref } from "vue";
+import { webStore } from "@/store";
+import router from '../router';
 export default {
   data() {
     return {
@@ -39,27 +87,46 @@ export default {
         phone: "",
         beginTime: "",
       },
+      menuList:router.options.routes
     };
   },
   setup() {
-    const {proxy} = getCurrentInstance();
-    console.log('proxy', proxy);
-    console.log(proxy.$api);
-    console.log(proxy.$sysName);
+    const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+    // console.log("proxy", proxy);
+    // console.log(proxy.$api);
+    // console.log(proxy.$sysName);
+    const store = webStore();
+    console.log("webStore", store.token);
+    console.log("counter", store.counter);
+    store.addCounter();
+    console.log("counter", store.counter);
     return { proxy };
   },
   created() {
     console.log("is created");
+    console.log('router', router.options.routes);
     this.getList();
   },
   methods: {
     /* 新闻中心 */
-    newsList(){
-      this.$router.push({path:'/news-list'});
+    newsList() {
+      this.$router.push({ path: "/news-list" });
+    },
+    formList() {
+      this.$router.push({ path: "/form-list" });
     },
     doSearch() {
       console.log(this.formInfo);
       console.log("do search");
+      this.$refs.searchForm.validate(async (valid) => {
+        if (valid) {
+          console.log("ok");
+          // this.getList();
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
     doReset() {
       console.log("重置");
@@ -85,8 +152,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.searchBox {
-  width: 300px;
-}
-</style>
+<style lang="scss"></style>
