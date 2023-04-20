@@ -52,6 +52,16 @@ const routes:any[] = [
     name: 'NewInput',
     component: () => import('../pages/form/new-form.vue'),
   },
+  {
+    path: '/flow-chat-antv',
+    name: 'flowChatAntV',
+    component: () => import('../pages/flow-chart/page01.vue'),
+  },
+  {
+    path: '/flow-chat-draggable',
+    name: 'flowChatDraggable',
+    component: () => import('../pages/flow-chart/page02.vue'),
+  },
 ];
 
 const router = createRouter({
