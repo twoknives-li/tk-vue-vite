@@ -1,88 +1,126 @@
 <template>
   <div>
-    <div v-for="(groupItem, key) in fromList" :key="key" @contextmenu.prevent>
-      <div>分组：{{ groupItem.groupName }}</div>
-      {{ groupItem.fromList }}
+    <el-button type="primary" @click="makeJson">生成JSON</el-button>
+    <el-row>
+      <el-col :span="18">
+        <div
+          v-for="(groupItem, key) in fromList"
+          :key="key"
+          @contextmenu.prevent
+        >
+          <div>分组：{{ groupItem.groupName }}</div>
+          <!-- {{ groupItem.fromList }} -->
 
-      <draggable
-        v-model="groupItem.fromList"
-        chosenClass="chosen"
-        forceFallback="true"
-        group="people"
-        animation="1000"
-        @start="data.drag = true"
-        @end="data.drag = false"
-        item-key="index"
-      >
-        <template #item="{ element }">
-          <div @mousedown="getInfo($event, element)">
-            <!-- {{ element.type }} -->
-            <el-form-item :label="element.nameENEN" :prop="element.nameEN">
-              
-            <br />
-            <div v-if="element.type === 'text'">
-              <el-input
-              disabled
-                v-model="state.info[element.nameEN]"
-                :name="element.nameEN"
-                placeholder=""
-              ></el-input>
-            </div>
-            <div v-if="element.type === 'radio'">
-              <el-radio-group v-model="state.info[element.nameEN]">
-                <el-radio
-                  v-for="(childItem, childKey) in element.valueList"
-                  :key="childKey"
-                  :label="childItem"
-                  >{{ element.labelList[childKey] }}</el-radio
-                >
-              </el-radio-group>
-              +
-            </div>
-            <div v-if="element.type === 'date'">
-              <el-date-picker
-                v-model="state.info[element.nameEN]"
-                :format="element.format"
-                :value-format="element.format"
-                placeholder="请选择"
-              ></el-date-picker>
-            </div>
-            <div v-if="element.type === 'select'">
-              <el-select v-model="state.info[element.nameEN]" placeholder="请选择">
-                <el-option
-                  v-for="dictItem in state.dictList[element.nameEN]"
-                  :key="dictItem.value"
-                  :label="dictItem.label"
-                  :value="dictItem.value"
-                >
-                </el-option>
+          <draggable
+            v-model="groupItem.fromList"
+            chosenClass="chosen"
+            forceFallback="true"
+            group="people"
+            animation="1000"
+            @start="data.drag = true"
+            @end="data.drag = false"
+            item-key="index"
+          >
+            <template #item="{ element }">
+              <div
+                @mousedown="getInfo($event, element)"
+                class="form-item m-3 cursor-move"
+              >
+                <!-- {{ element.type }} -->
+                <el-form-item :label="element.nameZH" :prop="element.nameEN">
+                  <div class="cursor-auto">
+                    <div v-if="element.type === 'text'">
+                      <el-input
+                      :disabled="element.disabled"
+                        v-model="state.info[element.nameEN]"
+                        :name="element.nameEN"
+                        placeholder=""
+                      ></el-input>
+                    </div>
+                    <div v-if="element.type === 'radio'">
+                      <el-radio-group v-model="state.info[element.nameEN]">
+                        <el-radio
+                          v-for="(childItem, childKey) in element.valueList"
+                          :key="childKey"
+                          :label="childItem"
+                          >{{ element.labelList[childKey] }}</el-radio
+                        >
+                      </el-radio-group>
+                      +
+                    </div>
+                    <div v-if="element.type === 'date'">
+                      <el-date-picker
+                        v-model="state.info[element.nameEN]"
+                        :format="element.format"
+                        :value-format="element.format"
+                        placeholder="请选择"
+                      ></el-date-picker>
+                    </div>
+                    <div v-if="element.type === 'select'">
+                      <el-select
+                        v-model="state.info[element.nameEN]"
+                        placeholder="请选择"
+                      >
+                        <el-option
+                          v-for="dictItem in state.dictList[element.nameEN]"
+                          :key="dictItem.value"
+                          :label="dictItem.label"
+                          :value="dictItem.value"
+                        >
+                        </el-option>
+                      </el-select>
+                    </div>
+                    <div v-if="element.type === 'checkbox'">
+                      <el-checkbox-group v-model="state.info[element.nameEN]">
+                        <el-checkbox
+                          v-for="(childItem, childKey) in element.valueList"
+                          :key="childItem"
+                          :label="childItem"
+                          >{{ element.labelList[childKey] }}</el-checkbox
+                        >
+                      </el-checkbox-group>
+                    </div>
+                    <div v-if="element.type === 'cascader'">
+                      {{ element.changeFun }}
+                      <el-cascader
+                        v-model="state.info[element.nameEN]"
+                        :props="{ multiple: false, checkStrictly: true }"
+                        :options="state.treeList[element.nameEN]"
+                        @change="
+                          (v) =>
+                            element.changeFun && handleChange(v, element.nameEN)
+                        "
+                      ></el-cascader>
+                    </div>
+                  </div>
+                </el-form-item>
+              </div>
+            </template>
+          </draggable>
+        </div>
+      </el-col>
+      <!-- 右侧编辑详情 -->
+      <el-col :span="6">
+        <div class="fixed columns-1 right-0 w-300">
+          <div>选中的div: {{ data.currtRow.nameZH }}</div>
+          <el-form>
+            <el-form-item label="类型">
+              <el-select v-model="data.currtRow.type" placeholder="">
+                <el-option :value="'text'" :label="'文本框'"></el-option>
+                <el-option :value="'radio'" :label="'单选'"></el-option>
+                <el-option :value="'select'" :label="'下拉'"></el-option>
               </el-select>
-            </div>
-            <div v-if="element.type === 'checkbox'">
-              <el-checkbox-group v-model="state.info[element.nameEN]">
-                <el-checkbox
-                  v-for="(childItem, childKey) in element.valueList"
-                  :key="childItem"
-                  :label="childItem"
-                  >{{ element.labelList[childKey] }}</el-checkbox
-                >
-              </el-checkbox-group>
-            </div>
-            <div v-if="element.type === 'cascader'">
-              {{ element.changeFun }}
-              <el-cascader
-                v-model="state.info[element.nameEN]"
-                :props="{ multiple: false, checkStrictly: true }"
-                :options="state.treeList[element.nameEN]"
-                @change="(v) => element.changeFun && handleChange(v, element.nameEN)"
-              ></el-cascader>
-            </div>
-          </el-form-item>
-          </div>
-        </template>
-      </draggable>
-    </div>
-    <div v-show="data.showCurrt">选中的div: {{ data.currtRow.name }}</div>
+            </el-form-item>
+            <el-form-item label="字段名">
+              <el-input v-model="data.currtRow.nameZH"></el-input>
+            </el-form-item>
+            <el-form-item label="默认值">
+              <el-input v-model="state.info[data.currtRow.nameEN]"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -135,7 +173,7 @@ const list: any = ref([
   {
     group: "分组B",
     type: "text",
-    nameZH: "nameB",
+    nameZH: "字段名B",
     nameEN: "nameB",
     // validator: "checkNameb",
     regex:
@@ -148,6 +186,7 @@ const list: any = ref([
     group: "分组B",
     type: "radio",
     nameEN: "nameC",
+    nameZH: "nameC",
     // validator: "myCustomFunction",
     disable: false,
     labelList: ["选项1", "选项2", "选项3"],
@@ -158,6 +197,7 @@ const list: any = ref([
     group: "分组B",
     type: "date",
     nameEN: "nameD",
+    nameZH: "nameD",
     disable: false,
     value: "",
     format: "YYYY-MM-DD",
@@ -166,6 +206,7 @@ const list: any = ref([
     group: "分组B",
     type: "select",
     nameEN: "nameE",
+    nameZH: "nameE",
     disable: false,
     dictCode: "dictcode123",
     value: "",
@@ -173,6 +214,7 @@ const list: any = ref([
   {
     group: "分组B",
     type: "checkbox",
+    nameZH: "checkbox",
     nameEN: "nameF",
     disable: false,
     dictCode: "",
@@ -182,6 +224,7 @@ const list: any = ref([
     group: "分组a",
     type: "cascader",
     nameEN: "nameG",
+    nameZH: "nameG",
     treeCode: "treeCode",
     changeFun: "changeFunA",
     disable: false,
@@ -191,6 +234,7 @@ const list: any = ref([
     group: "分组c",
     type: "cascader",
     nameEN: "mdd",
+    nameZH: "树形",
     treeCode: "treeCode",
     changeFun: "",
     disable: false,
@@ -213,13 +257,14 @@ const getInfo = (event, row) => {
   console.log(row);
   if (event.button === 0) {
     console.log("点击左键");
-    clearCurrt();
+    // clearCurrt();
   } else if (event.button === 1) {
     console.log("点击滚轮");
   } else {
     console.log("点击右键");
-    getCurrtInfo(row);
   }
+
+  getCurrtInfo(row);
 };
 
 const clearCurrt = () => {
@@ -349,8 +394,20 @@ const checkByZZ = (rule, value, callback) => {
     callback();
   }
 };
+
+// 显示最终数据json
+const makeJson = () => {
+  console.log(fromList);
+};
 onMounted(() => {
   console.log("vuedraggable");
   makeData();
 });
 </script>
+
+<style lang="scss" scoped>
+.form-item {
+  border: 1px solid #dedede;
+  padding: 10px;
+}
+</style>
