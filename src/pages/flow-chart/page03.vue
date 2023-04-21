@@ -31,7 +31,7 @@
                   <div class="cursor-auto">
                     <div v-if="element.type === 'text'">
                       <el-input
-                      :disabled="element.disabled"
+                        :disabled="element.disabled"
                         v-model="state.info[element.nameEN]"
                         :name="element.nameEN"
                         placeholder=""
@@ -116,6 +116,20 @@
             </el-form-item>
             <el-form-item label="默认值">
               <el-input v-model="state.info[data.currtRow.nameEN]"></el-input>
+            </el-form-item>
+            <el-form-item label="默认值">
+              {{state.treeList[data.currtRow.nameEN]}}
+              <el-select
+                v-model="state.treeList[data.currtRow.nameEN]"
+                placeholder=""
+              >
+                <el-option
+                  v-for="(item, key) in state.treeList[data.currtRow.nameEN]"
+                  :key="key"
+                  :value="item.value"
+                  :label="item.label"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-form>
         </div>
