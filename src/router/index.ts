@@ -67,6 +67,11 @@ const routes:any[] = [
     name: 'flowChatDraggableForm',
     component: () => import('../pages/flow-chart/page03.vue'),
   },
+  {
+    path: '/scroll-view',
+    name: '滚动视图',
+    component: () => import('../pages/scroll-view/index.vue'),
+  },
 ];
 
 const router = createRouter({
