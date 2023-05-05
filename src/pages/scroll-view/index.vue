@@ -67,28 +67,15 @@ const doCheck = (row, index, event) => {
   state.nowCurrt = row;
 
   const element: any = document.getElementById(row.item);
-  const boxItem: any = document.createElement('boxItem');
+  const boxItem: any = document.getElementById('boxItem');
   const offsetHeight = element.offsetHeight;
-  console.log(event);
-  // boxItem.scrollTo({
-  //   top: 40000,
-  //   behavior: "smooth"
-  // }); 
-  // element.scrollLeft  = 200;
-  element.scrollTo({
-  left: 0,
-  behavior: "smooth"
-});
-  // console.log("event", event);
-  // const element: any = document.getElementById('boxItem');
-  // console.log('element', element);
-  // var scrollLeft = element.scrollLeft;
-  // console.log('scrollLeft', scrollLeft);
-  // const downX = event.clientX; // 获取到点击的x下标
-  // const moveX = event.clientX;
-  // const scrollX = moveX - downX;
-  //         state.scrollLeft = 300 - scrollX;
-  //         console.log(state.scrollLeft);
+  // console.log(event);
+  // console.log(event.clientX);
+  // console.log(offsetHeight);
+
+  const left = index * 30;
+  // console.log(left);
+  boxItem.scrollLeft  = left ;
 };
 onMounted(() => {});
 </script>
