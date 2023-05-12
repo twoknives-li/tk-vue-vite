@@ -29,6 +29,17 @@
                 <!-- {{ element.type }} -->
                 <el-form-item :label="element.nameZH" :prop="element.nameEN">
                   <div class="cursor-auto">
+                    <div v-if="element.formType === 'list'">
+                      这里是list
+                      <el-button @click="addList(element)">增加list</el-button>
+                      <form-item
+                        v-for="(listItem, listKey) in state.info[
+                          element.nameEN
+                        ]"
+                        :key="listKey"
+                        :list="element.listOption.option"
+                      ></form-item>
+                    </div>
                     <div v-if="element.type === 'text'">
                       <el-input
                         :disabled="element.disabled"
@@ -118,7 +129,7 @@
               <el-input v-model="state.info[data.currtRow.nameEN]"></el-input>
             </el-form-item>
             <el-form-item label="默认值">
-              {{state.treeList[data.currtRow.nameEN]}}
+              {{ state.treeList[data.currtRow.nameEN] }}
               <el-select
                 v-model="state.treeList[data.currtRow.nameEN]"
                 placeholder=""
@@ -138,6 +149,12 @@
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  name: "form-item", //给组件命名
+};
+</script>
+
 <script setup lang="ts">
 import {
   ref,
@@ -153,6 +170,12 @@ import {
   onBeforeUnmount,
 } from "vue";
 import draggable from "vuedraggable";
+const props = defineProps({
+  list: {
+    type: Array,
+    default: () => [],
+  },
+});
 const state = reactive({
   info: {},
   dictList: {}, // 字典
@@ -165,24 +188,52 @@ const rules: any = reactive({
 });
 const list: any = ref([
   {
-    group: "分组a", // 分组
-    type: "text", // 类型  单选:radio 多选：checkbox 下拉:select  单行文本框:text  文本域：textarea 级联：cascader 数字：number
-    order: "1", // 排序
-    nameEN: "nameA", // 字段英文
-    nameZH: "字段A", // 字段中文
+    fieldType: "", // 字段类型
+    formType: "list", // 表单类型 动态列表：list 日期:date  单选:radio 多选：checkbox 下拉:select  单行文本框:text  文本域：textarea 级联：cascader 数字：number
+    order: 1, // 排序
+    nameEN: "", // 字段英文
+    nameZH: "", // 字段中文
     required: false, // 是否必填
     disable: false, // 是否可编辑
-    regex:
-      /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/, // 正则
-    value: "默认值0001", // 默认值
-    dictCode: "dictcode123", // 字典id （仅多选、单选、下拉）
-    treeCode: "treeCode", // 树形菜单id  （仅级联选择器)
-    precision: "2", // 精度 (仅数字)
-    format: "YYYY-MM-DD", // 格式化 (日期时)
+    regex: null, // 正则
+    value: "", // 默认值
+    dictCode: "", // 字典id （仅多选、单选、下拉）
+    treeCode: "", // 树形菜单id  （仅级联选择器)
+    precision: "", // 精度 (仅数字)
+    format: "", // 格式化 (日期时)
+    dateType: "", // 时间格式的类型
     inputWay: "manually", // 获取方式 手动:manually  自动:byDefault
     inputWayDefault: "", // 自动时从哪个字段获值
-    changeFun: "nameC", // 切换时给指定字段选项赋值
-    unitName: "万立方米", // 显示用单位
+    changeFun: "", // 切换时给指定字段选项赋值
+    unitName: "", // 显示用单位
+    placeholder: "", // 提示语
+    groupCode: "", //分组code
+    groupName: "", // 分组名称
+    groupOrder: "", // 分组排序
+    lgNumber: 12, // 字段栅格
+    remark: "", // 备注提醒
+    radioType: "default", // 单选框样式类型
+    showWordLimit: true, // 是否显示字符串统计
+    maxlength: 20, // 可输入最大字符串限制
+    optionType: "dict", // 配置项取值类型   dict:字典， option：本地配置项,  byApi:接口获取
+    option: [], // 可选项
+    apiUrl: "",
+    apiData: {}, // 接口传参， byApi接口获取配置项时传参数据
+    filterable: false, // 下拉选项是否允许搜索
+    listOption: {
+      option: [
+        {
+          group: "分组B",
+          type: "date",
+          nameEN: "nameD",
+          nameZH: "列表选项A",
+          disable: false,
+          value: "",
+          format: "YYYY-MM-DD",
+        },
+      ],
+      name: "ddd",
+    },
   },
   {
     group: "分组B",
@@ -294,10 +345,10 @@ const handleChange = (v, str) => {
   // console.log(name, e);
 };
 // 处理数据
-const makeData = () => {
+const makeData = (list) => {
   console.log(list.value);
   let allGroup: any = [];
-  list.value.map((item: any, key) => {
+  list.map((item: any, key) => {
     allGroup.push(item.group);
     if (item.dictCode) {
       getDict(item);
@@ -313,6 +364,15 @@ const makeData = () => {
     // 正则校验
     if (item.regex) {
       rules[item.nameEN] = [{ validator: checkByZZ, trigger: "blur" }];
+    }
+    if(item.formType === 'list'){
+      const childList: any = [];
+      const childListItem: any = {};
+      item.listOption.option.map(listItem=>{
+        childListItem[listItem.nameEN] = listItem.value;
+      })
+      childList.push(childListItem);
+      state.info[item.nameEN] = childList;
     }
     if (item.value) {
       state.info[item.nameEN] = item.value;
@@ -330,7 +390,7 @@ const makeData = () => {
       groupName: groupItem,
       fromList: [],
     };
-    list.value.map((item: any, key) => {
+    list.map((item: any, key) => {
       if (item.group === groupItem) {
         info.fromList.push(item);
       }
@@ -413,9 +473,26 @@ const checkByZZ = (rule, value, callback) => {
 const makeJson = () => {
   console.log(fromList);
 };
+
+// 增加list
+const addList = (item) => {
+  console.log(item);
+      const childListItem: any = {};
+      item.listOption.option.map(listItem=>{
+        childListItem[listItem.nameEN] = listItem.value;
+      })
+      state.info[item.nameEN].push(childListItem);
+
+};
 onMounted(() => {
-  console.log("vuedraggable");
-  makeData();
+  console.log("vuedraggable", props.list);
+  if (props.list && props.list.length > 0) {
+    console.log("子组件");
+    makeData(props.list);
+  } else {
+    const alllist = list.value;
+    makeData(alllist);
+  }
 });
 </script>
 
