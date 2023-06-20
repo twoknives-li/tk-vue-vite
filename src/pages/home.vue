@@ -26,10 +26,6 @@
   </div>
   <div>
     <div ref="mapInfo"></div>
-    <div class="flex flex-row p-2">
-      <el-button type="primary" @click="newsList">新闻中心</el-button>
-      <el-button type="primary" @click="formList">表单列表</el-button>
-      <el-button type="primary" @click="newsList">新闻中心</el-button>
       <el-link
         type="primary"
         class="mr-5"
@@ -71,16 +67,6 @@
         </el-form>
       </el-row>
     </div>
-    <div class="flex flex-row order-1">
-      <div>AA</div>
-      <div>AA</div>
-      <div>AA</div>
-      <div>AAb</div>
-    </div>
-    <div class="container mx-auto">
-      <div class="p-5">p-5</div>
-    </div>
-  </div>
 </template>
 
 <script lang="ts">
@@ -142,13 +128,6 @@ export default {
     this.getList();
   },
   methods: {
-    /* 新闻中心 */
-    newsList() {
-      this.$router.push({ path: "/news-list" });
-    },
-    formList() {
-      this.$router.push({ path: "/form-list" });
-    },
     doSearch() {
       console.log(this.formInfo);
       console.log("do search");
