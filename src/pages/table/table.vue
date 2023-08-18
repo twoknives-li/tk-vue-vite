@@ -19,7 +19,7 @@ const state = reactive({
 })
 onMounted(() => {
     state.loadingTable = true;
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < 20; i++) {
         state.tabelArr.push({
             "id": i,
             "deptId": "46350101",
