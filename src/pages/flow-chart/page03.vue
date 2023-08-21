@@ -1,102 +1,152 @@
 <template>
-  <el-row>
-    <el-col :span="18">
-      <el-button type="primary" @click="makeJson">生成JSON</el-button>
-      <el-button type="primary" @click="addStep">增加步骤</el-button>
-      <div class="flex flex-row">
-        <div class="m-4" v-for="(item, key) in stepList" :key="key">
-          <el-link>{{ item.label }}</el-link>
+  <div>
+    <el-row>
+      <el-col :span="18">
+        <el-button type="primary" @click="makeJson">生成JSON</el-button>
+        <el-button type="primary" @click="addStep">增加步骤</el-button>
+        <div class="flex flex-row">
+          <el-tabs v-model="state.nowStep" @tab-click="editStep">
+            <el-tab-pane
+              v-for="(item, key) in stepList"
+              :key="key"
+              :label="item.name"
+              :name="item.value"
+            ></el-tab-pane>
+          </el-tabs>
         </div>
-      </div>
-
-      <div v-for="(groupItem, key) in fromList" :key="key" @contextmenu.prevent>
-        <div>分组：{{ groupItem.groupName }}</div>
-        <!-- {{ groupItem.fromList }} -->
-
-        <draggable
-          v-model="groupItem.fromList"
-          chosenClass="chosen"
-          forceFallback="true"
-          group="people"
-          animation="1000"
-          @start="data.drag = true"
-          @end="data.drag = false"
-          item-key="index"
+        <div
+          v-for="(groupItem, key) in fromList"
+          :key="key"
+          @contextmenu.prevent
         >
-          <template #item="{ element }">
-            <div
-              @mousedown="getInfo($event, element)"
-              class="form-item m-3 cursor-move"
-            >
-              <!-- {{ element.type }} -->
-              <el-form-item :label="element.nameZH" :prop="element.nameEN">
-                <div class="cursor-auto">
-                  <div v-if="element.formType === 'list'">
-                    <el-button @click="addList(element)">增加年份</el-button>
-                  {{ state.info[element.nameEN] }}
-                    {{ element.listOption }} 
-                    <div v-for="(yearItem, yearKey) in state.info[element.nameEN]">
-                    {{yearItem.nameZH}}
-                     <div v-for="(listItem, listKey) in element.listOption.option"> 
-                      <form-item
-                        :element="listItem"
-                        :state="state"
-                        :key="listKey"
-                      ></form-item>
+          <div>分组：{{ groupItem.groupName }}</div>
+          <!-- {{ groupItem.fromList }} -->
+
+          <draggable
+            v-model="groupItem.fromList"
+            chosenClass="chosen"
+            forceFallback="true"
+            group="people"
+            animation="1000"
+            @start="data.drag = true"
+            @end="data.drag = false"
+            item-key="index"
+          >
+            <template #item="{ element }">
+              <div
+                @mousedown="getInfo($event, element)"
+                class="form-item m-3 cursor-move"
+              >
+                <!-- {{ element.type }} -->
+                <el-form-item :label="element.nameZH" :prop="element.nameEN">
+                  <div class="cursor-auto">
+                    <div v-if="element.formType === 'list'">
+                      <el-button @click="addList(element)">增加年份</el-button>
+                      {{ state.info[element.nameEN] }}
+                      {{ element.listOption }}
+                      <div
+                        v-for="(yearItem, yearKey) in state.info[
+                          element.nameEN
+                        ]"
+                        :key="yearKey"
+                      >
+                        {{ yearItem.nameZH }}
+                        <div
+                          v-for="(listItem, listKey) in element.listOption
+                            .option"
+                          :key="listKey"
+                        >
+                          <form-item
+                            :element="listItem"
+                            :state="state"
+                            :key="listKey"
+                          ></form-item>
+                        </div>
+                      </div>
                     </div>
-                    </div>
+                    <form-item
+                      :element="element"
+                      :state="state"
+                      :key="key"
+                    ></form-item>
                   </div>
-                  <form-item
-                    :element="element"
-                    :state="state"
-                    :key="key"
-                  ></form-item>
-                </div>
-              </el-form-item>
-            </div>
-          </template>
-        </draggable>
-      </div>
-    </el-col>
-    <!-- 右侧编辑详情 -->
-    <el-col :span="6">
-      <div class="fixed columns-1 right-0 w-300">
-        <div>选中的div: {{ data.currtRow.nameZH }}</div>
-        <el-form>
-          <el-form-item label="类型">
-            <el-select v-model="data.currtRow.type" placeholder="">
-              <el-option :value="'text'" :label="'文本框'"></el-option>
-              <el-option :value="'radio'" :label="'单选'"></el-option>
-              <el-option :value="'select'" :label="'下拉'"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="字段名">
-            <el-input v-model="data.currtRow.nameZH"></el-input>
-          </el-form-item>
-          <el-form-item label="默认值">
-            <el-input v-model="state.info[data.currtRow.nameEN]"></el-input>
-          </el-form-item>
-          <el-form-item label="默认值">
-            <!-- {{ state.treeList[data.currtRow.nameEN] }} -->
-            <el-select
-              v-model="state.treeList[data.currtRow.nameEN]"
+                </el-form-item>
+              </div>
+            </template>
+          </draggable>
+        </div>
+      </el-col>
+      <!-- 右侧编辑详情 -->
+      <el-col :span="6" class="fixed right-0 w-full">
+        <el-tabs v-model="state.currtTabs">
+          <el-tab-pane label="要素信息" name="1"></el-tab-pane>
+          <el-tab-pane label="步骤信息" name="2"></el-tab-pane>
+        </el-tabs>
+        <div class="columns-1" v-show="state.currtTabs === '1'">
+          <div>选中的div: {{ data.currtRow.nameZH }}</div>
+          <el-form>
+            <el-form-item label="类型">
+              <el-select v-model="data.currtRow.type" placeholder="">
+                <el-option :value="'text'" :label="'文本框'"></el-option>
+                <el-option :value="'radio'" :label="'单选'"></el-option>
+                <el-option :value="'select'" :label="'下拉'"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="字段名">
+              <el-input v-model="data.currtRow.nameZH"></el-input>
+            </el-form-item>
+            <el-form-item label="默认值">
+              <el-input v-model="state.info[data.currtRow.nameEN]"></el-input>
+            </el-form-item>
+            <el-form-item label="默认值">
+              <!-- {{ state.treeList[data.currtRow.nameEN] }} -->
+              <el-select
+                v-model="state.treeList[data.currtRow.nameEN]"
+                placeholder=""
+              >
+                <el-option
+                  v-for="(item, key) in state.treeList[data.currtRow.nameEN]"
+                  :key="key"
+                  :value="item.value"
+                  :label="item.label"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div v-show="state.currtTabs === '2'">
+          <div>
+            <el-input
+              v-model="state.currtStepInfo.name"
               placeholder=""
-            >
-              <el-option
-                v-for="(item, key) in state.treeList[data.currtRow.nameEN]"
-                :key="key"
-                :value="item.value"
-                :label="item.label"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-col>
-  </el-row>
+            ></el-input>
+
+            <el-button @click="doImportItems">导入分组及要素</el-button>
+          </div>
+        </div>
+      </el-col>
+      <el-dialog title="导入分组及要素" v-model="state.showTransfer">
+        <el-select v-model="state.importStep" placeholder="" class="m-4">
+          <el-option v-for="(item, key) in stepList" :key="key" :label="item.name" :value="item.value"></el-option>
+        </el-select>
+        <el-transfer
+          v-model="state.importList"
+          :data="state.importAllList"
+          :props="{
+            key: 'groupName',
+            label: 'groupName',
+          }"
+        />
+        <div class="text-center m-3">
+        <el-button type="primary" @click="doImport">确定</el-button>
+        </div>
+      </el-dialog>
+    </el-row>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { ElMessageBox } from "element-plus";
 import {
   ref,
   useAttrs,
@@ -112,23 +162,35 @@ import {
 } from "vue";
 import draggable from "vuedraggable";
 import formItem from "./components/formItem.vue";
+import { formOption } from "./settingConfig";
 const props = defineProps({
   list: {
     type: Array,
     default: () => [],
   },
 });
-const state = reactive({
+const state: any = reactive({
+  currtTabs: "2",
+  nowStep: 0,
+  currtStepInfo: {},
   info: {},
   dictList: {}, // 字典
   treeList: {}, // 树形
   functionList: {},
+  showTransfer: false, // 显示穿梭框+
+  importAllList: [],
+  importList: [],
 });
 const fromList: any = ref([]);
 const rules: any = reactive({
   // nameB: [ { validator: checkNameb, trigger: "blur" }]
 });
-const stepList: any = ref([]);
+const stepList: any = ref([
+  {
+    name: "步骤一",
+    value: 0,
+  },
+]);
 const list: any = ref([
   {
     fieldType: "", // 字段类型
@@ -167,7 +229,16 @@ const list: any = ref([
     listOption: {
       option: [
         {
-          group: "分组B",
+          group: "分组C",
+          type: "date",
+          nameEN: "nameD",
+          nameZH: "列表选项A",
+          disable: false,
+          value: "",
+          format: "YYYY-MM-DD",
+        },
+        {
+          group: "分组C",
           type: "date",
           nameEN: "nameD",
           nameZH: "列表选项A",
@@ -248,7 +319,8 @@ const list: any = ref([
     changeFun: "",
     disable: false,
     value: "",
-  },{
+  },
+  {
     group: "测试直接引用组件",
     type: "components",
     nameEN: "test-comp",
@@ -434,7 +506,7 @@ const addList = (item) => {
   item.listOption.option.map((listItem) => {
     childListItem[listItem.nameEN] = listItem.value;
   });
-  childListItem.nameZH = '测试A'
+  childListItem.nameZH = Number(2023 + state.info[item.nameEN].length);
   state.info[item.nameEN].push(childListItem);
 };
 
@@ -445,10 +517,40 @@ const addList = (item) => {
  */
 const addStep = () => {
   const info = {
-    label: "步骤 - " + Number(stepList.value.length + 1),
+    name: "步骤 - " + Number(stepList.value.length + 1),
+    value: Number(stepList.value.length + 1),
   };
   stepList.value.push(info);
 };
+
+/**
+ * @name: 编辑步骤信息
+ * @desc:
+ * @return {*}
+ */
+const editStep = (tab, event) => {
+  console.log(tab);
+  stepList.value.map((item) => {
+    state.currtStepInfo = item;
+  });
+};
+
+/**
+ * @name: 导入分组及要素至指定步骤
+ * @desc:
+ * @return {*}
+ */
+const doImportItems = () => {
+  state.showTransfer = true;
+  state.importList = [];
+  state.importAllList = fromList.value;
+  // state.importAllList.push(fromList.value[0]);
+};
+
+const doImport = () =>{
+  console.log(state.importList);
+  console.log('执行导入');
+}
 onMounted(() => {
   console.log("vuedraggable", props.list);
   if (props.list && props.list.length > 0) {
