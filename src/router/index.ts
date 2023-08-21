@@ -45,7 +45,7 @@ const routes:any[] = [
   {
     path: '/table-input',
     name: 'TableInput',
-    component: () => import('../pages/table-input/index.vue'),
+    component: () => import('../pages/table-input/index02.vue'),
   },
   {
     path: '/new-input',
@@ -69,7 +69,7 @@ const routes:any[] = [
   },
   {
     path: '/scroll-view',
-    name: '滚动视图',
+    name: 'scroll-view',
     component: () => import('../pages/scroll-view/index.vue'),
   },
 ];
