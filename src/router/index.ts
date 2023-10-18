@@ -72,6 +72,11 @@ const routes:any[] = [
     name: 'scroll-view',
     component: () => import('../pages/scroll-view/index.vue'),
   },
+  {
+    path: '/calendar',
+    name: 'calendar',
+    component: () => import('../pages/calendar/index.vue'),
+  },
 ];
 
 const router = createRouter({
