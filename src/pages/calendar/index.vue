@@ -77,7 +77,7 @@ const textContent = (date) => {
   });
 };
 const doUrl = (data, item)=>{
-  console.log('doUrl  点击了区域框',data, item);
+  console.log('doUrl  点击了区域框 ',data, item);
 } 
 onMounted(() => {
   console.log(" 这里是日历页");
