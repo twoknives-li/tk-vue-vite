@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 // commoncss
+import './theme/index.scss';
 import "./common.css"
 // element-plus
 import ElementPlus from 'element-plus'

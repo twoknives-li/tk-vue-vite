@@ -77,6 +77,16 @@ const routes:any[] = [
     name: 'calendar',
     component: () => import('../pages/calendar/index.vue'),
   },
+  {
+    path: '/leecode',
+    name: 'leecode',
+    component: () => import('../pages/leecode/index.vue'),
+  },
+  {
+    path: '/setting',
+    name: 'setting',
+    component: () => import('../pages/setting/index.vue'),
+  },
 ];
 
 const router = createRouter({
