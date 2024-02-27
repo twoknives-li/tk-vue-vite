@@ -3,15 +3,14 @@ import { createHtmlPlugin } from "vite-plugin-html";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 
-export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
-  const envConfig = loadEnv(mode, "./env");
+const viteConfig = defineConfig((mode: ConfigEnv) => {
+	const env = loadEnv(mode.mode, process.cwd());
   const getViteEnv = (mode, target) => {
     return loadEnv(mode, process.cwd())[target];
   };
   const { resolve } = path;
-  const env = loadEnv(mode, process.cwd());
-  const result = {
-    envConfig: envConfig,
+  return  {
+    envConfig: env,
     envDir: "./env",
     envPrefix: ["VITE_", "DZ_"],
     plugins: [
@@ -67,6 +66,9 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         },
       },
     },
+    define: {
+      __TK_NAME__: JSON.stringify('tk-vite-develop'),
+    },
   };
-  return result;
 });
+export default viteConfig;

@@ -1,3 +1,5 @@
 [data-theme="dark"] {
 	--tk-bg-main-color: #1f1f1f;
+  
+	--tk-bg-topBar: var(--tk-color-disabled) !important;
 }
