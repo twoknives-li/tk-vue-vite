@@ -4,7 +4,6 @@
     class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl"
   >
     <div class="md:flex">
-      
       <div class="p-8">
         <div
           class="uppercase tracking-wide text-sm text-indigo-500 font-semibold"
@@ -28,47 +27,47 @@
   </div>
   <div>
     <div ref="mapInfo"></div>
-      <el-link
-        type="primary"
-        class="mr-5"
-        v-for="(item, key) in menuList"
-        :key="key"
-        :href="item.path"
-        >{{ item.name }}</el-link
-      >
-    </div>
-    <div class="searchBox">
-      <el-row :gutter="20">
-        <el-form :model="formInfo" label-width="auto" ref="searchForm">
-          <el-col :lg="20" :xl="20">
-            <el-form-item label="姓名">
-              <el-input v-model="formInfo.name" placeholder="姓名"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :lg="20" :xl="20">
-            <el-form-item label="电话">
-              <el-input v-model="formInfo.phone" placeholder="电话"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :lg="20" :xl="20">
-            <el-form-item label="登录时间"
-              ><el-date-picker
-                v-model="formInfo.beginTime"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始时间"
-                end-placeholder="截止时间"
-              >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :lg="20" :xl="20">
-            <el-button type="primary" @click="doSearch">搜索</el-button>
-            <el-button type="reset" @click="doReset">重置</el-button>
-          </el-col>
-        </el-form>
-      </el-row>
-    </div>
+    <el-link
+      type="primary"
+      class="mr-5"
+      v-for="(item, key) in menuList"
+      :key="key"
+      :href="item.path"
+      >{{ item.name }}</el-link
+    >
+  </div>
+  <div class="searchBox">
+    <el-row :gutter="20">
+      <el-form :model="formInfo" label-width="auto" ref="searchForm">
+        <el-col :lg="20" :xl="20">
+          <el-form-item label="姓名">
+            <el-input v-model="formInfo.name" placeholder="姓名"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :lg="20" :xl="20">
+          <el-form-item label="电话">
+            <el-input v-model="formInfo.phone" placeholder="电话"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :lg="20" :xl="20">
+          <el-form-item label="登录时间"
+            ><el-date-picker
+              v-model="formInfo.beginTime"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始时间"
+              end-placeholder="截止时间"
+            >
+            </el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :lg="20" :xl="20">
+          <el-button type="primary" @click="doSearch">搜索</el-button>
+          <el-button type="reset" @click="doReset">重置</el-button>
+        </el-col>
+      </el-form>
+    </el-row>
+  </div>
 </template>
 
 <script lang="ts">
@@ -81,6 +80,7 @@ import {
 } from "vue";
 import { webStore } from "@/store";
 import router from "../router";
+import mittBus from "@/utils/mitt";
 export default {
   data() {
     return {
@@ -122,6 +122,10 @@ export default {
     console.log("counter", store.counter);
     store.addCounter();
     console.log("counter", store.counter);
+
+    mittBus.on("changeTheme", () => {
+      console.log("Home页，这里是监听mittbus");
+    });
     return { proxy, showStr, makeShowStr };
   },
   created() {
@@ -168,8 +172,7 @@ export default {
 </script>
 
 <style lang="scss">
-.box{
+.box {
   background-color: var(--next-bg-topBar);
 }
 </style>
-

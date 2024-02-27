@@ -5,6 +5,12 @@
 </template>
 <script setup lang="ts">
 import { watch, nextTick, reactive, onMounted, computed } from "vue";
+
+import mittBus from "@/utils/mitt";
+mittBus.on("changeTheme", () => {
+      console.log("leecode, 这里是监听mittbus");
+    });
+
 class ListNode {
   val: number;
   next: ListNode | null;

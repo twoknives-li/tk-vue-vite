@@ -18,14 +18,18 @@
     </el-form>
 
     <div class="box">fff</div>
+
+    <el-button type="primary" @click="doJump">跳转</el-button>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch, nextTick, reactive, onMounted, computed } from "vue";
+import { ref, watch, nextTick, reactive, onMounted, computed, onUnmounted } from "vue";
 import { useThemeConfig } from "@/store/themeConfig";
 import { useChangeColor } from "@/utils/theme";
 import { Local } from "@/utils/storage";
 import { storeToRefs } from "pinia";
+import mittBus from '@/utils/mitt';
+import router from "@/router";
 
 const storesThemeConfig = useThemeConfig();
 const { themeConfig } = storeToRefs(storesThemeConfig);
@@ -51,10 +55,22 @@ const changColor = (color) => {
   );
   setLocalThemeConfigStyle();
 };
+
+const doJump = () =>{
+  router.push('/leecode');
+}
 // 存储布局配置全局主题样式（html根标签）
 const setLocalThemeConfigStyle = () => {
   Local.set("themeConfigStyle", document.documentElement.style.cssText);
+  
+  mittBus.emit('changeTheme', themeConfig);
 };
+
+// 页面卸载时
+onUnmounted(() => {
+  console.log('页面卸载时');
+	// mittBus.off('changeTheme', () => {});
+});
 </script>
 <style lang="scss">
 .box {
