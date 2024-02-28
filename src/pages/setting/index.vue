@@ -20,6 +20,7 @@
     <div class="box">fff</div>
 
     <el-button type="primary" @click="doJump">跳转</el-button>
+    <el-button type="primary" @click="doExport">导出Excel</el-button>
   </div>
 </template>
 <script setup lang="ts">
@@ -30,6 +31,7 @@ import { Local } from "@/utils/storage";
 import { storeToRefs } from "pinia";
 import mittBus from '@/utils/mitt';
 import router from "@/router";
+import * as XLSX from 'xlsx'
 
 const storesThemeConfig = useThemeConfig();
 const { themeConfig } = storeToRefs(storesThemeConfig);
@@ -56,6 +58,19 @@ const changColor = (color) => {
   setLocalThemeConfigStyle();
 };
 
+// 导出Excel
+const doExport = () =>{
+  const data = [
+        ['姓名', '年龄', '性别', '身高'],
+        ['Alice', 20,'','175'],
+        ['Bob', 25, '男'],
+        ['Charlie', 30, '', '']
+      ];
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      XLSX.writeFile(wb, 'data.xlsx');
+}
 const doJump = () =>{
   router.push('/leecode');
 }
