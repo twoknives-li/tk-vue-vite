@@ -21,17 +21,30 @@
 
     <el-button type="primary" @click="doJump">跳转</el-button>
     <el-button type="primary" @click="doExport">导出Excel</el-button>
+    <hr />
+
+    <div ref="qrcodeRef" class="qrcode-box"></div>
+    <el-button type="primary" @click="makeQrcode">生成二维码</el-button>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch, nextTick, reactive, onMounted, computed, onUnmounted } from "vue";
+import {
+  ref,
+  watch,
+  nextTick,
+  reactive,
+  onMounted,
+  computed,
+  onUnmounted,
+} from "vue";
 import { useThemeConfig } from "@/store/themeConfig";
 import { useChangeColor } from "@/utils/theme";
 import { Local } from "@/utils/storage";
 import { storeToRefs } from "pinia";
-import mittBus from '@/utils/mitt';
+import mittBus from "@/utils/mitt";
 import router from "@/router";
-import * as XLSX from 'xlsx'
+import * as XLSX from "xlsx";
+import QRCode from "qrcodejs2-fixes";
 
 const storesThemeConfig = useThemeConfig();
 const { themeConfig } = storeToRefs(storesThemeConfig);
@@ -40,6 +53,9 @@ const { getLightColor, getDarkColor } = useChangeColor();
 const state = ref({
   topBar: "",
 });
+
+const qrcodeRef = ref<HTMLElement | null>(null); // 二维码
+
 const changeTheme = (theme) => {
   console.log("changeTheme");
 
@@ -59,36 +75,56 @@ const changColor = (color) => {
 };
 
 // 导出Excel
-const doExport = () =>{
+const doExport = () => {
   const data = [
-        ['姓名', '年龄', '性别', '身高'],
-        ['Alice', 20,'','175'],
-        ['Bob', 25, '男'],
-        ['Charlie', 30, '', '']
-      ];
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-      XLSX.writeFile(wb, 'data.xlsx');
-}
-const doJump = () =>{
-  router.push('/leecode');
-}
+    ["姓名", "年龄", "性别", "身高"],
+    ["Alice", 20, "", "175"],
+    ["Bob", 25, "男"],
+    ["Charlie", 30, "", ""],
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  XLSX.writeFile(wb, "data.xlsx");
+};
+const doJump = () => {
+  router.push("/leecode");
+};
 // 存储布局配置全局主题样式（html根标签）
 const setLocalThemeConfigStyle = () => {
   Local.set("themeConfigStyle", document.documentElement.style.cssText);
-  
-  mittBus.emit('changeTheme', themeConfig);
+
+  mittBus.emit("changeTheme", themeConfig);
+};
+
+/**
+ * @name: 生成二维码
+ * @return {*}
+ */
+const makeQrcode = () => { 
+  // 初始化生成二维码
+  (qrcodeRef.value as HTMLElement).innerHTML = "";
+  new QRCode(qrcodeRef.value, {
+    text: `https://kezhang.twoknives.cn/h5`,
+    width: 260,
+    height: 260,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+  });
 };
 
 // 页面卸载时
 onUnmounted(() => {
-  console.log('页面卸载时');
-	// mittBus.off('changeTheme', () => {});
+  console.log("页面卸载时");
+  // mittBus.off('changeTheme', () => {});
 });
 </script>
 <style lang="scss">
 .box {
   background-color: var(--next-bg-topBar);
+}
+.qrcode-box{
+  width: 160px;
+  height: 160px;
 }
 </style>

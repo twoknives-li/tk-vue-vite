@@ -1,4 +1,8 @@
 <template>
+  <div>
+    <div class="testBox boxA">标注模式</div>
+    <div class="testBox boxB">怪异模式</div>
+  </div>
   <div class="box">fff</div>
   <div
     class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl"
@@ -174,5 +178,18 @@ export default {
 <style lang="scss">
 .box {
   background-color: var(--next-bg-topBar);
+}
+.testBox {
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+  padding: 10px;
+  border: 10px solid red;
+}
+.boxA{
+  box-sizing: content-box !important; // 标注模式
+}
+.boxB {
+  box-sizing: border-box !important; // 怪异模式
 }
 </style>
