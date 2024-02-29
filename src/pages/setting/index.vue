@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="p-5">
     <el-form class="p-12">
       <el-form-item label="主题色">
         <!-- <el-color-picker @change="changColor('topBar')" v-model="state.topBar" /> {{ state.topBar }} -->
@@ -16,12 +16,22 @@
         >开启夜间模式</el-button
       >
     </el-form>
-
-    <div class="box">fff</div>
-
+ 
     <el-button type="primary" @click="doJump">跳转</el-button>
     <el-button type="primary" @click="doExport">导出Excel</el-button>
-    <hr />
+    <hr class="my-4" />
+
+    <div class="text-lg font-bold">moment时间转换</div>
+    <el-button type="primary" @click="makeTime">开始生成日期</el-button>
+    <div>{{ state.nowDay }}</div>
+    <div>{{ state.nowDayStrA }}</div>
+    <div>{{ state.nowDayStrB }}</div>
+    <div>
+      {{ moment().add(1, 'days').calendar() }}
+    </div>
+    
+
+    <hr class="my-4" />
 
     <div ref="qrcodeRef" class="qrcode-box"></div>
     <el-button type="primary" @click="makeQrcode">生成二维码</el-button>
@@ -45,6 +55,8 @@ import mittBus from "@/utils/mitt";
 import router from "@/router";
 import * as XLSX from "xlsx";
 import QRCode from "qrcodejs2-fixes";
+import moment from "moment";
+import "moment/dist/locale/zh-cn";
 
 const storesThemeConfig = useThemeConfig();
 const { themeConfig } = storeToRefs(storesThemeConfig);
@@ -52,6 +64,9 @@ const { getLightColor, getDarkColor } = useChangeColor();
 
 const state = ref({
   topBar: "",
+  nowDay: "",
+  nowDayStrA:'',
+  nowDayStrB:''
 });
 
 const qrcodeRef = ref<HTMLElement | null>(null); // 二维码
@@ -101,7 +116,7 @@ const setLocalThemeConfigStyle = () => {
  * @name: 生成二维码
  * @return {*}
  */
-const makeQrcode = () => { 
+const makeQrcode = () => {
   // 初始化生成二维码
   (qrcodeRef.value as HTMLElement).innerHTML = "";
   new QRCode(qrcodeRef.value, {
@@ -111,6 +126,17 @@ const makeQrcode = () => {
     colorDark: "#000000",
     colorLight: "#ffffff",
   });
+};
+
+/**
+ * @name: moment生成日期
+ * @return {*}
+ */
+const makeTime = () => {
+  state.value.nowDay = moment().format("YYYY-MM-DD");
+  moment.locale(); 
+  state.value.nowDayStrA = moment().format('ll'); 
+  state.value.nowDayStrB = moment().format('LLLL'); 
 };
 
 // 页面卸载时
@@ -123,7 +149,7 @@ onUnmounted(() => {
 .box {
   background-color: var(--next-bg-topBar);
 }
-.qrcode-box{
+.qrcode-box {
   width: 160px;
   height: 160px;
 }

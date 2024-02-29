@@ -87,6 +87,11 @@ const routes:any[] = [
     name: 'setting',
     component: () => import('../pages/setting/index.vue'),
   },
+  {
+    path: '/threejs',
+    name: 'threejs',
+    component: () => import('../pages/threejs/index.vue'),
+  },
 ];
 
 const router = createRouter({
