@@ -109,7 +109,7 @@ const data = {
         },
       },
     },
-    
+
     {
       id: "node6",
       shape: "rect",
@@ -128,7 +128,7 @@ const data = {
         },
       },
     },
-    
+
     {
       id: "node7",
       shape: "rect",
@@ -164,6 +164,10 @@ const data = {
 //     progress: (progress + 10) % 100,
 //   });
 // }, 2000);
+const parse = () => {
+  const jsonDate = JSON.stringify(graph.value.toJSON(), null, 2);
+  console.log("jsonDate", graph.value.toJSON());
+};
 
 onMounted(() => {
   makeInfo();
@@ -224,16 +228,20 @@ onMounted(() => {
     },
   });
 
-
   graph.value.addNode({
     shape: "custom-vue-node",
     x: 50,
     y: 50,
   });
 
-  graph.value.on('change:data', ({ current }) => {
-      const { progress } = current
-      console.log(current);
-    })
+  graph.value.on("cell:change:*", () => {
+    console.log("dfdfdfdf");
+    parse();
+  });
+
+  graph.value.on("change:data", ({ current }) => {
+    const { progress } = current;
+    console.log('change:data', current);
+  });
 });
 </script>
