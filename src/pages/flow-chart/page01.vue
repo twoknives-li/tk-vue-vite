@@ -44,6 +44,9 @@ const data = {
       width: 100,
       height: 40,
       label: "总公司",
+      data: {
+        disableMove: false,//true为可拖拽，false不可拖拽
+      },
       attrs: {
         // body 是选择器名称，选中的是 rect 元素
         body: {
@@ -63,6 +66,9 @@ const data = {
       width: 100,
       height: 40,
       label: "AAA",
+      data: {
+        disableMove: false,//true为可拖拽，false不可拖拽
+      },
       attrs: {
         body: {
           stroke: "#fff",
@@ -81,6 +87,9 @@ const data = {
       width: 100,
       height: 40,
       label: "分公司A",
+      data: {
+        disableMove: false,//true为可拖拽，false不可拖拽
+      },
       attrs: {
         body: {
           stroke: "#8f8f8f",
@@ -177,6 +186,14 @@ onMounted(() => {
       color: "#ffffff",
     },
     autoResize: true,
+    // 关于拖拽的方法
+    interacting: function (cellView) {
+		    if (cellView.cell.getData() != undefined && !cellView.cell.getData().disableMove) {
+		      return { nodeMovable: false }
+		    }
+		    return true
+		  },
+
   });
 
   graph.value.fromJSON(data); // 渲染元素
@@ -241,7 +258,7 @@ onMounted(() => {
 
   graph.value.on("change:data", ({ current }) => {
     const { progress } = current;
-    console.log('change:data', current);
+    console.log("change:data", current);
   });
 });
 </script>
