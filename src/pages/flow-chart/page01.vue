@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="app-content">
-      <div id="container" style="height: 300px"></div>
+      <div id="container" style="height: 600px"></div>
     </div>
   </div>
 </template>
@@ -40,10 +40,10 @@ const data = {
       id: "node1",
       shape: "rect",
       x: 40,
-      y: 40,
+      y: 90,
       width: 100,
       height: 40,
-      label: "hello",
+      label: "总公司",
       attrs: {
         // body 是选择器名称，选中的是 rect 元素
         body: {
@@ -56,13 +56,87 @@ const data = {
       },
     },
     {
-      id: "node2",
-      shape: "rect",
-      x: 160,
+      id: "node5",
+      shape: "circle",
+      x: 40,
       y: 180,
       width: 100,
       height: 40,
-      label: "world",
+      label: "AAA",
+      attrs: {
+        body: {
+          stroke: "#fff",
+          strokeWidth: 1,
+          fill: "#333",
+          rx: 6,
+          ry: 6,
+        },
+      },
+    },
+    {
+      id: "node2",
+      shape: "rect",
+      x: 40,
+      y: 300,
+      width: 100,
+      height: 40,
+      label: "分公司A",
+      attrs: {
+        body: {
+          stroke: "#8f8f8f",
+          strokeWidth: 1,
+          fill: "#fff",
+          rx: 6,
+          ry: 6,
+        },
+      },
+    },
+    {
+      id: "node3",
+      shape: "rect",
+      x: 200,
+      y: 300,
+      width: 100,
+      height: 40,
+      label: "分公司A",
+      attrs: {
+        body: {
+          stroke: "#8f8f8f",
+          strokeWidth: 1,
+          fill: "#fff",
+          rx: 6,
+          ry: 6,
+        },
+      },
+    },
+    
+    {
+      id: "node6",
+      shape: "rect",
+      x: -100,
+      y: 300,
+      width: 100,
+      height: 40,
+      label: "分公司D",
+      attrs: {
+        body: {
+          stroke: "#8f8f8f",
+          strokeWidth: 1,
+          fill: "#fff",
+          rx: 6,
+          ry: 6,
+        },
+      },
+    },
+    
+    {
+      id: "node7",
+      shape: "rect",
+      x: 360,
+      y: 300,
+      width: 100,
+      height: 40,
+      label: "分公司E",
       attrs: {
         body: {
           stroke: "#8f8f8f",
@@ -96,7 +170,7 @@ onMounted(() => {
   graph.value = new Graph({
     container: document.getElementById("container")!,
     background: {
-      color: "#F2F7FA",
+      color: "#ffffff",
     },
     autoResize: true,
   });
@@ -104,10 +178,62 @@ onMounted(() => {
   graph.value.fromJSON(data); // 渲染元素
   graph.value.centerContent(); // 居中显示
 
+  // 连接线
+  graph.value.addEdge({
+    shape: "edge",
+    source: "node1", // 源节点
+    target: "node5", // 目标节点
+  });
+  graph.value.addEdge({
+    shape: "edge",
+    source: "node5", // 源节点
+    target: "node2", // 目标节点
+    router: {
+      name: "orth",
+      args: {},
+    },
+  });
+  graph.value.addEdge({
+    shape: "edge",
+    source: "node5", // 源节点
+    target: "node3", // 目标节点
+    // vertices: [{ x: 100, y: 160 }],
+    router: {
+      name: "orth",
+      args: {},
+    },
+  });
+  graph.value.addEdge({
+    shape: "edge",
+    source: "node5", // 源节点
+    target: "node6", // 目标节点
+    // vertices: [{ x: 100, y: 160 }],
+    router: {
+      name: "orth",
+      args: {},
+    },
+  });
+  graph.value.addEdge({
+    shape: "edge",
+    source: "node5", // 源节点
+    target: "node7", // 目标节点
+    // vertices: [{ x: 100, y: 160 }],
+    router: {
+      name: "orth",
+      args: {},
+    },
+  });
+
+
   graph.value.addNode({
     shape: "custom-vue-node",
-    x: 100,
-    y: 60,
+    x: 50,
+    y: 50,
   });
+
+  graph.value.on('change:data', ({ current }) => {
+      const { progress } = current
+      console.log(current);
+    })
 });
 </script>
