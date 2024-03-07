@@ -109,11 +109,11 @@ export default {
       myChart.setOption({
         title: {
           type: "map",
-          text: "疫情防控隔离点",
+          text: "测试A",
         },
         subtitle: {
           useHTML: true,
-          text: "四川隔离点数据",
+          text: "数据",
         },
         tooltip: {
           trigger: "item",
